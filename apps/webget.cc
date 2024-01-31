@@ -7,21 +7,24 @@
 
 using namespace std;
 
+//this function aims to get the URL of the target
 void get_URL(const string& host, const string& path) {
-	DatagramSocket datagramsocket;
-    Address address(host, 80); // Assuming the server is running on port 80
-    datagramsocket.sendto(address);
-    string request = "GET " + path + " HTTP/1.1\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
-
-    char buffer[4096];
-    while (true) {
-        memset(buffer, 0, sizeof(buffer));
-        datagramsocket.recv(buffer, sizeof(buffer));
-        if (strlen(buffer) == 0) {
-            break;
-        }
-        cout << buffer;
-    }
+    TCPSocket socket;
+	socket.connect(Address(host,"http"));
+	string request = "GET " + path + " HTTP/1.1\r\n"
+                 + "Host: " + host + "\r\n"
+                 + "Connection: close\r\n"
+                 + "\r\n";
+	socket.write(request);
+	vector<string> buffers;
+	while(!socket.eof()) {
+		socket.read(buffers);
+		for (const auto& buffer : buffers) {
+			cout << buffer << endl;
+		}
+	}
+	socket.close();
+	cerr << "FUnction called: get URL(" << host << ", " << path << ").\n "; 
 }
 
 int main( int argc, char* argv[] )
