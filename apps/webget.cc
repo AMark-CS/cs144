@@ -4,28 +4,46 @@
 #include <iostream>
 #include <span>
 #include <string>
-
 using namespace std;
 
 //this function aims to get the URL of the target
-void get_URL(const string& host, const string& path) {
-    TCPSocket socket;
-	socket.connect(Address(host,"http"));
+// void get_URL(const std::string& host, const std::string& path) {
+//     TCPSocket socket;
+//     socket.connect(Address(host, "http"));
+//     string request = "GET " + path + " HTTP/1.1\r\n"
+//                           "Host: " + host + "\r\n"
+//                           "Connection: close\r\n\r\n";
+//     size_t bytes_written = socket.write(request);
+// 	if (bytes_written < request.size()) {
+//         cerr << "Failed to write the complete request.\n";
+//         return;
+//     }
+//     string buffer;
+//     while (!socket.eof()) {
+//         socket.read(buffer);
+// 		cout << buffer ;
+// 		buffer.clear();
+//     }
+//     socket.close();
+// }
+void get_URL(const string &host, const string &path) {
+	TCPSocket tsk;
+	tsk.connect(Address(host,"http"));
+
 	string request = "GET " + path + " HTTP/1.1\r\n"
-                 + "Host: " + host + "\r\n"
-                 + "Connection: close\r\n"
-                 + "\r\n";
-	socket.write(request);
-	vector<string> buffers;
-	while(!socket.eof()) {
-		socket.read(buffers);
-		for (const auto& buffer : buffers) {
-			cout << buffer << endl;
-		}
+					 "Host: " + host + "\r\n"
+					 "Connection: close\r\n\r\n";
+	tsk.write(request);
+	//close the socket
+	tsk.shutdown(2);
+	string str;
+	while(!tsk.eof()) {
+		tsk.read(str);
+		cout << str;
 	}
-	socket.close();
-	cerr << "FUnction called: get URL(" << host << ", " << path << ").\n "; 
+	tsk.close();
 }
+
 
 int main( int argc, char* argv[] )
 {

@@ -24,6 +24,7 @@ public:
 protected:
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
   uint64_t capacity_;
+  bool closed_ = false;
   bool error_ {};
 };
 
